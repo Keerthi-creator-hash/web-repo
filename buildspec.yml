@@ -5,20 +5,22 @@ phases:
     runtime-versions:
       nodejs: 18
     commands:
-      - echo Installing AWS CLI
+      - echo "Installing AWS CLI"
       - pip install awscli
   pre_build:
     commands:
-      - echo Invalidation started at `date`
+      - echo "Pre-build phase started at `date`"
+      - echo "Listing contents of the ./dist directory:"
+      - ls -la ./dist  # List contents of the dist directory to ensure it exists and has files
   build:
     commands:
-      - echo Deploying to S3 bucket my-bucket-cicd
+      - echo "Deploying to S3 bucket my-bucket-cicd"
       - aws s3 cp ./dist/ s3://my-bucket-cicd/ --recursive
-      - echo Triggering CloudFront invalidation
-      - aws cloudfront create-invalidation --distribution-id E1W6B4DVJ2JF3R --paths "/stavir%20services.png"
+      - echo "Triggering CloudFront invalidation"
+      - aws cloudfront create-invalidation --distribution-id E1W6B4DVJ2JF3R --paths "/*"  # Invalidate all files
   post_build:
     commands:
-      - echo Invalidation completed at `date`
+      - echo "Build completed at `date`"
 
 artifacts:
   base-directory: dist
