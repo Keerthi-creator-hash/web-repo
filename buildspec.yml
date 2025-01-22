@@ -3,21 +3,16 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo "Starting the pre-build phase at `date`"
+      - echo Preparing to upload the image...
   build:
     commands:
-      - echo "Deploying 'stavir services.png' to S3 bucket 'my-bucket-cicd'"
-      - aws s3 cp "stavir services.png" s3://my-bucket-cicd/  # Upload the specific PNG file to the bucket
-      - echo "Triggering CloudFront invalidation"
-      - aws cloudfront create-invalidation --distribution-id E1W6B4DVJ2JF3R --paths "/stavir%20services.png"  # Invalidate the specific file in CloudFront
+      - echo Uploading the image to S3...
+      - aws s3 cp "path/to/your/stavir services.png" s3://my-bucket-cicd/
   post_build:
     commands:
-      - echo "Build completed successfully at `date`"
+      - echo Invalidating CloudFront cache...
+      - aws cloudfront create-invalidation --distribution-id E1W6B4DVJ2JF3R --paths "/*"
 
 artifacts:
   files:
-    - "stavir services.png"  # Optionally specify the PNG file as an artifact
-
-cache:
-  paths:
-    - './node_modules/**/*'
+    - '**/*'
