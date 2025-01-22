@@ -1,0 +1,30 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo Installing AWS CLI
+      - pip install awscli
+  pre_build:
+    commands:
+      - echo Invalidation started at `date`
+  build:
+    commands:
+      - echo Deploying to S3 bucket my-bucket-cicd
+      - aws s3 cp ./dist/ s3://my-bucket-cicd/ --recursive
+      - echo Triggering CloudFront invalidation
+      - aws cloudfront create-invalidation --distribution-id E1W6B4DVJ2JF3R --paths "/stavir%20services.png"
+  post_build:
+    commands:
+      - echo Invalidation completed at `date`
+
+artifacts:
+  base-directory: dist
+  files:
+    - '**/*'
+
+cache:
+  paths:
+    - './node_modules/**/*'
