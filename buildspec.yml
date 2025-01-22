@@ -10,22 +10,19 @@ phases:
   pre_build:
     commands:
       - echo "Pre-build phase started at `date`"
-      - echo "Listing contents of the ./dist directory:"
-      - ls -la ./dist  # List contents of the dist directory to ensure it exists and has files
   build:
     commands:
-      - echo "Deploying to S3 bucket my-bucket-cicd"
-      - aws s3 cp ./dist/ s3://my-bucket-cicd/ --recursive
+      - echo "Deploying stavir services.png to S3 bucket my-bucket-cicd"
+      - aws s3 cp "stavir services.png" s3://my-bucket-cicd/  # Upload the specific PNG file
       - echo "Triggering CloudFront invalidation"
-      - aws cloudfront create-invalidation --distribution-id E1W6B4DVJ2JF3R --paths "/*"  # Invalidate all files
+      - aws cloudfront create-invalidation --distribution-id E1W6B4DVJ2JF3R --paths "/stavir%20services.png"  # Invalidate the specific file
   post_build:
     commands:
       - echo "Build completed at `date`"
 
 artifacts:
-  base-directory: dist
   files:
-    - '**/*'
+    - "stavir services.png"  # Specify the PNG file as an artifact if needed
 
 cache:
   paths:
